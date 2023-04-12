@@ -1,4 +1,5 @@
 const User = require("../models/model.user");
+const bcrypt = require("bcrypt");
 
 exports.index = async (req, res) => {
 	try {
@@ -21,7 +22,9 @@ exports.index = async (req, res) => {
 
 exports.store = async (req, res) => {
 	try {
+		req.body.password = await bcrypt.hash(req.body.password, 10);
 		const user = new User(req.body);
+
 		await user.save();
 		res.status(200).json({
 			success: true,
@@ -67,6 +70,7 @@ exports.show = async (req, res) => {
 exports.update = async (req, res) => {
 	//update
 	try {
+		req.body.password = await bcrypt.hash(req.body.password, 10);
 		const user = await User.findOneAndUpdate(req.params.id, req.body, {
 			new: true,
 		});
