@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/model.user");
-//toke
+
+//token
 module.exports = (req, res, next) => {
 	const token = req.headers.authorization?.split(" ")[1];
 
@@ -11,7 +12,8 @@ module.exports = (req, res, next) => {
 			error: "Unauthorized",
 		});
 	}
-	//if valid token
+
+	//if valid token for the
 
 	try {
 		jwt.verify(
