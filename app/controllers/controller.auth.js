@@ -55,3 +55,43 @@ exports.login = async (req, res) => {
 		});
 	}
 };
+
+exports.refreshToken = (req, res) => {
+	const token = req.body;
+
+	//verify the token
+	try {
+		jwt.verify(
+			token.token,
+			process.env.REFRESH_TOKEN_SECRET,
+			async (err, decoded) => {
+				if (err) {
+					return res.status(401).json({
+						success: false,
+						error: "Unauthorized",
+					});
+				} else {
+					const payload = {
+						sub: decoded.sub,
+						email: decoded.email,
+						name: decoded.name,
+					};
+					return res.status(200).json({
+						success: true,
+						access_token: jwt.sign(
+							payload,
+							process.env.ACCESS_TOKEN_SECRET,
+							{ expiresIn: "1h" }
+						),
+					});
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({
+			success: false,
+			error: "Server Error",
+			message: err.message,
+		});
+	}
+};

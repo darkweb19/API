@@ -1,9 +1,20 @@
 const User = require("../models/model.user");
-const bcrypt = require("bcrypt");
 
 exports.index = async (req, res) => {
 	try {
-		const users = await User.find();
+		const q = req.query.q;
+		const limit = req.query.limit;
+		// const users = await User.find({ firstName: new RegExp(q, "i") });
+		// const users = await User.find().byFirstName(q).limit(limit);
+
+		let users = User.find();
+		if (q) {
+			users = users.byFirtName(q);
+		}
+		if (limit) {
+			users = users.limit(limit);
+		}
+		users = await users;
 
 		res.status(200).json({
 			success: true,
@@ -22,7 +33,6 @@ exports.index = async (req, res) => {
 
 exports.store = async (req, res) => {
 	try {
-		req.body.password = await bcrypt.hash(req.body.password, 10);
 		const user = new User(req.body);
 
 		await user.save();
